@@ -9,7 +9,9 @@
   "license": "MIT",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
-    "read": "1.0.5"
+    "commander": "2.2.0",
+    "read": "1.0.5",
+    "underscore": "1.6.0"
   },
   "main": "pass.js",
   "devDependencies": {
