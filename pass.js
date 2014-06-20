@@ -54,19 +54,22 @@ commander.parseExpectedArgs(["<domain>"]);
 commander.version(package.version);
 commander.option("-s, --salt", "generate a salt for the specified domain, or 'default'");
 commander.parse(process.argv);
-_if(((commander.args.length === 0) && ! commander.salt), (function() {
+var configExists = fs.existsSync(CONFIG_FILE);
+var shouldSetupSalt = (commander.salt || ! configExists);
+_if(((commander.args.length === 0) && ! shouldSetupSalt), (function() {
 commander.help();
 }));
-var configExists = fs.existsSync(CONFIG_FILE);
 var config = _if(configExists, (function() {
 var configStr = fs.readFileSync(CONFIG_FILE, {
 encoding: "utf8"
 });
 return JSON.parse(configStr);
-}), _else, DEFAULT_CONFIG);
+}), _else, (function() {
+return DEFAULT_CONFIG;
+}));
 var domain = commander.args.join(SEPARATOR);
 var salt = (config[domain] || config.default);
-_if((commander.salt || ! salt), (function() {
+_if((shouldSetupSalt || ! salt), (function() {
 var saltDomain = _if((domain !== ""), (function() {
 return domain;
 }), _else, (function() {

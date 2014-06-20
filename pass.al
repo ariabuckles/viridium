@@ -47,19 +47,20 @@ main = [
     commander.option '-s, --salt' "generate a salt for the specified domain, or 'default'"
     commander.parse(process.argv)
 
-    if (commander.args.length == 0 and (not commander.salt)) [
+    configExists = fs.existsSync CONFIG_FILE
+    shouldSetupSalt = commander.salt or (not configExists)
+    if (commander.args.length == 0 and (not shouldSetupSalt)) [
         commander.help()
     ]
 
-    configExists = fs.existsSync CONFIG_FILE
     config = if configExists [
         configStr = fs.readFileSync CONFIG_FILE {encoding: 'utf8'}
         ret JSON.parse configStr
-    ] else DEFAULT_CONFIG
+    ] else [DEFAULT_CONFIG]
 
     domain = commander.args.join SEPARATOR
     salt = config@domain or config.default
-    if (commander.salt or (not salt)) [
+    if (shouldSetupSalt or (not salt)) [
         saltDomain = if (domain != "") [domain] else ['default']
         createSalt saltDomain config
     ] (domain != "") [
