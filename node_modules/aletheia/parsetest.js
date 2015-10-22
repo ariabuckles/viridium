@@ -4,6 +4,7 @@ var ParseNode = require("./build/parse-tree.js").ParseNode;
 var parser = require("./build/parser.js");
 var desugar = require("./build/desugar.js");
 var primitivize = require("./build/primitivize.js");
+var error_check = require("./build/error-check.js");
 var rewrite = require("./build/rewrite-symbols.js");
 var compile = require("./build/code-gen.js");
 
@@ -19,6 +20,9 @@ console.log("\n==== NORMALIZED ====");
 var ast = desugar(parseTree);
 var primitivized = primitivize(ast);
 console.log(JSON.stringify(primitivized, null, 4));
+
+console.log("\n==== ERROR CHECKING ====");
+error_check(primitivized);
 
 console.log("\n==== REWRITTEN ====");
 var rewritten = rewrite(primitivized);

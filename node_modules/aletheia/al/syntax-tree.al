@@ -39,7 +39,7 @@ SyntaxTree = {
         ret new SyntaxNode {
             type: "lambda"
             arguments: args
-            statements: statements
+            statements: stmts
         }
     ]
 

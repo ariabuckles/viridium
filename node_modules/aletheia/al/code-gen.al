@@ -59,7 +59,7 @@ interleave = [ array value trailingValue |
 //  #assert interleave(array, value).join("") === array.join(value)
 //]
 
-compile = [ node |
+compile :: ? = [ node |
     res = if (is_instance node SyntaxNode) [
         ret compile@(node.type) node
     ] else [

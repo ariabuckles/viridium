@@ -3,6 +3,8 @@
 // Desugars fancy syntax, creating a SyntaxTree from the original
 // ParseTree.
 
+assert = require "assert"
+
 _ = require "underscore"
 
 ParseTree = require "./parse-tree.js"
@@ -76,6 +78,19 @@ _.extend desugar {
             type: "lambda"
             arguments: args
             statements: {statement}
+        }
+    ]
+
+    "arrow" = [ arrowNode |
+        left = arrowNode.left
+        right = arrowNode.right
+        assert (right.type == 'unit-list')
+        
+        units = {_.first right.units, left}.concat (_.rest right.units)
+
+        ret SyntaxNode {
+            type: 'unit-list'
+            units: _.map units desugar
         }
     ]
 

@@ -51,29 +51,29 @@ result[key] = func(value);
 return result;
 });
 var rewrite = (function(node) {
-return _if(_.isArray(node), (function() {
+return _if(_.isArray(node), (function(_it) {
 return _.map(node, rewrite);
-}), is_instance(node, SyntaxNode), (function() {
+}), is_instance(node, SyntaxNode), (function(_it) {
 return rewrite[node.type](node);
-}), rewrite[typeof(node)], (function() {
+}), rewrite[typeof(node)], (function(_it) {
 return rewrite[typeof(node)](node);
-}), _else, (function() {
+}), _else, (function(_it) {
 return node;
 }));
 });
 _.extend(rewrite, {
 object: (function(obj) {
-return _if((obj === null), (function() {
+return _if((obj === null), (function(_it) {
 return null;
-}), _else, (function() {
+}), _else, (function(_it) {
 return mapObject(obj, rewrite);
 }));
 }),
 variable: (function(variable) {
 var optTranslate = translateSymbols[variable.name];
-var name = _if(optTranslate, (function() {
+var name = _if(optTranslate, (function(_it) {
 return optTranslate;
-}), _else, (function() {
+}), _else, (function(_it) {
 return variable.name;
 }));
 return new SyntaxNode({
@@ -106,10 +106,10 @@ key: rewrite(tableAccess.key)
 "unit-list": (function(unitList) {
 var units = unitList.units;
 var func = _.first(units);
-return _if(((func.type === "variable") && translateKeywordFunctions[func.name]), (function() {
-var value = _if((units.length === 2), (function() {
+return _if(((func.type === "variable") && translateKeywordFunctions[func.name]), (function(_it) {
+var value = _if((units.length === 2), (function(_it) {
 return units[1];
-}), _else, (function() {
+}), _else, (function(_it) {
 return new SyntaxNode({
 type: "unit-list",
 units: _.rest(units)
@@ -120,7 +120,7 @@ type: "keyword-function",
 name: translateKeywordFunctions[func.name],
 value: rewrite(value)
 });
-}), _else, (function() {
+}), _else, (function(_it) {
 return new SyntaxNode({
 type: "unit-list",
 units: _.map(unitList.units, rewrite)

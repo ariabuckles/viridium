@@ -1,5 +1,5 @@
 binary_search = [ array target lower upper comparator |
-    mid = _div (lower + upper + 1) 2
+    mid = Math.floor ((lower + upper + 1) / 2)
     ret if (lower >= upper) [
         ret lower
     ] else [
@@ -34,17 +34,7 @@ find_mountain_index_of = [ array target |
     ]
 ]
 
-arr = {
-    1
-    3
-    5
-    7
-    9
-    8
-    6
-    4
-    2
-}
+arr = {1, 3, 5, 7, 9, 8, 6, 4, 2}
 
 mutable i = 0
 while [ret (i < arr.length)] [

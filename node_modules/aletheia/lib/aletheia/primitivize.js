@@ -34,12 +34,12 @@ result[key] = func(value);
 return result;
 });
 var primitivize = (function(parsed) {
-var res = _if(_.isArray(parsed), (function() {
+var res = _if(_.isArray(parsed), (function(_it) {
 return _.map(parsed, primitivize);
-}), is_instance(parsed, SyntaxNode), (function() {
+}), is_instance(parsed, SyntaxNode), (function(_it) {
 var type = parsed.type;
 return primitivize[type](parsed);
-}), _else, (function() {
+}), _else, (function(_it) {
 return parsed;
 }));
 return res;

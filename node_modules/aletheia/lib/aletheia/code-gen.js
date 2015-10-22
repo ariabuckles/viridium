@@ -47,7 +47,7 @@ var preambleStr = ["var _else = {identifier: 'else'};",
 "    }",
 "}",
 ""].join("\n");
-var getPreamble = (function() {
+var getPreamble = (function(_it) {
 return new SourceNode(null, null, null, preambleStr);
 });
 var IDENTIFIER_REGEX = /^[_a-zA-Z0-9]+$/;
@@ -55,16 +55,16 @@ var interleave = (function(array, value, trailingValue) {
 var result = [];
 _.each(array, (function(elem, i) {
 result.push(elem);
-_if((((i + 1) !== array.length) || trailingValue), (function() {
+_if((((i + 1) !== array.length) || trailingValue), (function(_it) {
 result.push(value);
 }));
 }));
 return result;
 });
 var compile = (function(node) {
-var res = _if(is_instance(node, SyntaxNode), (function() {
+var res = _if(is_instance(node, SyntaxNode), (function(_it) {
 return compile[node.type](node);
-}), _else, (function() {
+}), _else, (function(_it) {
 return compile[typeof(node)](node);
 }));
 return res;
@@ -77,14 +77,14 @@ string: (function(str) {
 return new SourceNode(null, null, "source.al", strings.escape(str));
 }),
 object: (function(obj) {
-return _if((obj === null), (function() {
+return _if((obj === null), (function(_it) {
 return new SourceNode(null, null, "source.al", "null");
-}), _.isArray(obj), (function() {
+}), _.isArray(obj), (function(_it) {
 var fields = _.map(obj, compile);
 return new SourceNode(null, null, "source.al", _.flatten(["[",
 interleave(fields, ",\n", false),
 "]"]));
-}), _else, (function() {
+}), _else, (function(_it) {
 var fields = _.map(obj, (function(value, key) {
 var result = [compile["table-key"](key),
 ": ",
@@ -97,9 +97,9 @@ interleave(fields, ",\n", false),
 }));
 }),
 "table-key": (function(key) {
-return _if(IDENTIFIER_REGEX.test(key), (function() {
+return _if(IDENTIFIER_REGEX.test(key), (function(_it) {
 return key;
-}), _else, (function() {
+}), _else, (function(_it) {
 return strings.escape(key);
 }));
 }),
@@ -117,16 +117,16 @@ assignment: (function(assign) {
 var modifier = assign.modifier;
 var left = compile(assign.left);
 var right = compile(assign.right);
-return _if(((modifier === null) || (modifier === "mutable")), (function() {
+return _if(((modifier === null) || (modifier === "mutable")), (function(_it) {
 return new SourceNode(null, null, "source.al", ["var ",
 left,
 " = ",
 right]);
-}), (modifier === "mutate"), (function() {
+}), (modifier === "mutate"), (function(_it) {
 return new SourceNode(null, null, "source.al", [left,
 " = ",
 right]);
-}), _else, (function() {
+}), _else, (function(_it) {
 throw new Error(("Invalid assignment modifier: " + modifier));
 }));
 }),
@@ -152,7 +152,7 @@ result.add("(");
 var params = _.rest(unitList.units);
 _.each(params, (function(unit, i) {
 result.add(compile(unit));
-_if(((i + 1) !== params.length), (function() {
+_if(((i + 1) !== params.length), (function(_it) {
 result.add(", ");
 }));
 }));
@@ -165,11 +165,11 @@ return new SourceNode(null, null, "source.al", [keyword.name,
 compile(keyword.value)]);
 }),
 "table-access": (function(tableAccess) {
-return _if(((typeof(tableAccess.key) === "string") && IDENTIFIER_REGEX.test(tableAccess.key)), (function() {
+return _if(((typeof(tableAccess.key) === "string") && IDENTIFIER_REGEX.test(tableAccess.key)), (function(_it) {
 return new SourceNode(null, null, "source.al", [compile(tableAccess.table),
 ".",
 tableAccess.key]);
-}), _else, (function() {
+}), _else, (function(_it) {
 return new SourceNode(null, null, "source.al", [compile(tableAccess.table),
 "[",
 compile(tableAccess.key),
@@ -179,25 +179,25 @@ compile(tableAccess.key),
 operation: (function(comp) {
 var left = new SourceNode(null, null, "source.al", compile(comp.left));
 var right = new SourceNode(null, null, "source.al", compile(comp.right));
-var op = _if((comp.operation === "=="), (function() {
+var op = _if((comp.operation === "=="), (function(_it) {
 return "===";
-}), (comp.operation === "!="), (function() {
+}), (comp.operation === "!="), (function(_it) {
 return "!==";
-}), _else, (function() {
+}), _else, (function(_it) {
 return comp.operation;
 }));
 return new SourceNode(null, null, "source.al", ["(",
-_if(left, (function() {
+_if(left, (function(_it) {
 return left;
-}), _else, (function() {
+}), _else, (function(_it) {
 return "";
 })),
 " ",
 op,
 " ",
-_if(right, (function() {
+_if(right, (function(_it) {
 return right;
-}), _else, (function() {
+}), _else, (function(_it) {
 return "";
 })),
 ")"]);

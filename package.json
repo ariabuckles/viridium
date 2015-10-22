@@ -15,7 +15,7 @@
   },
   "main": "pass.js",
   "devDependencies": {
-    "aletheia": "0.0.2"
+    "aletheia": "0.0.4"
   },
   "repository": {
     "type": "git",

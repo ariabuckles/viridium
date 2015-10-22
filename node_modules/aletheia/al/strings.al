@@ -1,3 +1,4 @@
+JSON = global.JSON
 
 // Takes a string beginning and ending with a quote mark
 unescape = [ escapedStr |
