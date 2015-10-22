@@ -56,7 +56,7 @@ read(PROMPT, (function(error, master, isDefault) {
 var isError = ((error !== null) && (error !== undefined));
 var isEmpty = (isDefault || (master === ""));
 var isValid = ! (isError || isEmpty);
-_if(isValid, (function() {
+_if(isValid, (function(_it) {
 var result = bcrypt.hashSync(((master + SEPARATOR) + domain), salt);
 assert((result.length === BCRYPT_HASH_LENGTH));
 assert((RESULT_LENGTH <= 32));
@@ -65,45 +65,45 @@ console.log(slicedResult);
 }));
 }));
 });
-var main = (function() {
+var main = (function(_it) {
 commander.parseExpectedArgs(["<domain>"]);
 commander.version(package.version);
 commander.option("-s, --salt", "generate a salt for the specified domain, or 'default'");
 commander.parse(process.argv);
 var configExists = fs.existsSync(CONFIG_FILE);
 var shouldSetupSalt = (commander.salt || ! configExists);
-_if(((commander.args.length === 0) && ! shouldSetupSalt), (function() {
+_if(((commander.args.length === 0) && ! shouldSetupSalt), (function(_it) {
 commander.help();
 }));
-var config = _if(configExists, (function() {
+var config = _if(configExists, (function(_it) {
 var configStr = fs.readFileSync(CONFIG_FILE, {
 encoding: "utf8"
 });
 return JSON.parse(configStr);
-}), _else, (function() {
+}), _else, (function(_it) {
 return DEFAULT_CONFIG;
 }));
 var domain = commander.args.join(SEPARATOR);
 var salt = (config[domain] || config.default);
-_if((shouldSetupSalt || ! salt), (function() {
-var saltDomain = _if(((domain !== "") && configExists), (function() {
+_if((shouldSetupSalt || ! salt), (function(_it) {
+var saltDomain = _if(((domain !== "") && configExists), (function(_it) {
 return domain;
-}), _else, (function() {
+}), _else, (function(_it) {
 return "default";
 }));
 createSalt(saltDomain, config);
-}), (domain !== ""), (function() {
+}), (domain !== ""), (function(_it) {
 getPassword(domain, salt);
 }));
 });
 var verifyDomain = (function(domain, config, callback) {
-_if(config[domain], (function() {
+_if(config[domain], (function(_it) {
 read({
 prompt: ((("The domain '" + domain) + "' already has a salt!\n") + "Are you sure you want to overwrite it? [y/N]"),
 timeout: ((5 * SECONDS_PER_MINUTE) * MS_PER_SECOND),
 output: process.stderr
 }, (function(error, confirmStr, isDefault) {
-_if(((! error && ! isDefault) && (confirmStr === "y")), callback, _else, (function() {
+_if(((! error && ! isDefault) && (confirmStr === "y")), callback, _else, (function(_it) {
 console.error("Cancelled.");
 }));
 }));
@@ -111,10 +111,10 @@ console.error("Cancelled.");
 });
 var createSalt = (function(domain, config) {
 console.error((("Setting salt for domain '" + domain) + "'."));
-verifyDomain(domain, config, (function() {
+verifyDomain(domain, config, (function(_it) {
 read(ROUNDS_PROMPT, (function(error, roundsStr, isDefault) {
 var rounds = Number(roundsStr);
-_if(((u.isFinite(rounds) && (rounds >= 10)) && (rounds <= 30)), (function() {
+_if(((u.isFinite(rounds) && (rounds >= 10)) && (rounds <= 30)), (function(_it) {
 var salt = bcrypt.genSaltSync(rounds);
 var newConfig = u.extend({
 
@@ -125,7 +125,7 @@ fs.writeFileSync(CONFIG_FILE, newConfigStr, {
 encoding: "utf8"
 });
 console.error(((((("Salt saved in " + CONFIG_FILE) + ".\n") + "Be sure to back this up.\n") + "It is safe to store this file in a ") + "publicly accessible location."));
-}), _else, (function() {
+}), _else, (function(_it) {
 console.error("Cancelled.");
 }));
 }));
