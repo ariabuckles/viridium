@@ -70,7 +70,7 @@ return DEFAULT_CONFIG;
 var domain = commander.args.join(SEPARATOR);
 var salt = (config[domain] || config.default);
 _if((shouldSetupSalt || ! salt), (function() {
-var saltDomain = _if((domain !== ""), (function() {
+var saltDomain = _if(((domain !== "") && configExists), (function() {
 return domain;
 }), _else, (function() {
 return "default";

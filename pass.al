@@ -61,7 +61,7 @@ main = [
     domain = commander.args.join SEPARATOR
     salt = config@domain or config.default
     if (shouldSetupSalt or (not salt)) [
-        saltDomain = if (domain != "") [domain] else ['default']
+        saltDomain = if (domain != "" and configExists) [domain] else ['default']
         createSalt saltDomain config
     ] (domain != "") [
         getPassword domain salt

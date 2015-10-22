@@ -1,6 +1,6 @@
 {
   "name": "viridium",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "stateless password manager",
   "bin": {
     "viridium": "viridium"
