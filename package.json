@@ -1,0 +1,32 @@
+{
+  "name": "viridium",
+  "version": "0.1.0",
+  "description": "stateless password manager",
+  "bin": {
+    "viridium": "viridium"
+  },
+  "author": "Jack Toole",
+  "license": "MIT",
+  "dependencies": {
+    "aletheia": "0.0.2",
+    "bcrypt-nodejs": "0.0.3",
+    "read": "1.0.5"
+  },
+  "main": "pass.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jacktoole1/viridium.git"
+  },
+  "keywords": [
+    "bcrypt",
+    "stateless",
+    "password",
+    "manager",
+    "aletheia"
+  ],
+  "bugs": {
+    "url": "https://github.com/jacktoole1/viridium/issues"
+  },
+  "homepage": "https://github.com/jacktoole1/viridium"
+}
