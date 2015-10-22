@@ -27,6 +27,8 @@ var bcrypt = require("bcrypt-nodejs");
 var commander = require("commander");
 var u = require("underscore");
 var package = require("./package.json");
+var console = global.console;
+var JSON = global.JSON;
 var SEPARATOR = " ";
 var NUM_ROUNDS = 15;
 var RESULT_LENGTH = 20;
@@ -50,6 +52,20 @@ output: process.stderr
 };
 var HOME = ((process.env.HOME || process.env.HOMEPATH) || process.env.USERPROFILE);
 var CONFIG_FILE = (HOME + "/.viridium.json");
+var getPassword = (function(domain, salt) {
+read(PROMPT, (function(error, master, isDefault) {
+var isError = ((error !== null) && (error !== undefined));
+var isEmpty = (isDefault || (master === ""));
+var isValid = ! (isError || isEmpty);
+_if(isValid, (function() {
+var result = bcrypt.hashSync(((master + SEPARATOR) + domain), salt);
+assert((result.length === BCRYPT_HASH_LENGTH));
+assert((RESULT_LENGTH <= 32));
+var slicedResult = result.slice((null - RESULT_LENGTH));
+console.log(slicedResult);
+}));
+}));
+});
 var main = (function() {
 commander.parseExpectedArgs(["<domain>"]);
 commander.version(package.version);
@@ -81,6 +97,19 @@ createSalt(saltDomain, config);
 getPassword(domain, salt);
 }));
 });
+var verifyDomain = (function(domain, config, callback) {
+_if(config[domain], (function() {
+read({
+prompt: ((("The domain '" + domain) + "' already has a salt!\n") + "Are you sure you want to overwrite it? [y/N]"),
+timeout: ((5 * SECONDS_PER_MINUTE) * MS_PER_SECOND),
+output: process.stderr
+}, (function(error, confirmStr, isDefault) {
+_if(((! error && ! isDefault) && (confirmStr === "y")), callback, _else, (function() {
+console.error("Cancelled.");
+}));
+}));
+}), _else, callback);
+});
 var createSalt = (function(domain, config) {
 console.error((("Setting salt for domain '" + domain) + "'."));
 verifyDomain(domain, config, (function() {
@@ -100,33 +129,6 @@ console.error(((((("Salt saved in " + CONFIG_FILE) + ".\n") + "Be sure to back t
 }), _else, (function() {
 console.error("Cancelled.");
 }));
-}));
-}));
-});
-var verifyDomain = (function(domain, config, callback) {
-_if(config[domain], (function() {
-read({
-prompt: ((("The domain '" + domain) + "' already has a salt!\n") + "Are you sure you want to overwrite it? [y/N]"),
-timeout: ((5 * SECONDS_PER_MINUTE) * MS_PER_SECOND),
-output: process.stderr
-}, (function(error, confirmStr, isDefault) {
-_if(((! error && ! isDefault) && (confirmStr === "y")), callback, _else, (function() {
-console.error("Cancelled.");
-}));
-}));
-}), _else, callback);
-});
-var getPassword = (function(domain, salt) {
-read(PROMPT, (function(error, master, isDefault) {
-var isError = ((error !== null) && (error !== undefined));
-var isEmpty = (isDefault || (master === ""));
-var isValid = ! (isError || isEmpty);
-_if(isValid, (function() {
-var result = bcrypt.hashSync(((master + SEPARATOR) + domain), salt);
-assert((result.length === BCRYPT_HASH_LENGTH));
-assert((RESULT_LENGTH <= 32));
-var slicedResult = result.slice((null - RESULT_LENGTH));
-console.log(slicedResult);
 }));
 }));
 });

@@ -9,6 +9,9 @@ u = require "underscore"
 
 package = require "./package.json"
 
+console = global.console
+JSON = global.JSON
+
 // Configurable Params
 SEPARATOR = ' '
 NUM_ROUNDS = 15
@@ -41,6 +44,29 @@ ROUNDS_PROMPT = {
 HOME = process.env.HOME or process.env.HOMEPATH or process.env.USERPROFILE
 CONFIG_FILE = HOME + "/.viridium.json"
 
+getPassword = [ domain salt |
+    read PROMPT [ error master isDefault |
+        // Check for "", timeout, or escaping with Ctrl-C
+        isError = (error != null and error != undefined)
+        isEmpty = isDefault or (master == "")
+
+        isValid = not (isError or isEmpty)
+
+        if isValid [
+            result = bcrypt.hashSync (master + SEPARATOR + domain) salt
+            assert (result.length == BCRYPT_HASH_LENGTH)
+
+            // The first 28 characters of the result are roughly the salt.
+            // We grab RESULT_LENGTH characters from the tail of the result string
+            assert (RESULT_LENGTH <= 32)
+            slicedResult = result.slice (-RESULT_LENGTH)
+
+            // And send that on stdout
+            console.log slicedResult
+        ]
+    ]
+]
+
 main = [
     commander.parseExpectedArgs {'<domain>'}
     commander.version package.version
@@ -66,6 +92,26 @@ main = [
     ] (domain != "") [
         getPassword domain salt
     ]
+]
+
+verifyDomain = [ domain config callback |
+    if config@domain [
+        read {
+            prompt: (
+                "The domain '" + domain + "' already has a salt!\n" +
+                "Are you sure you want to overwrite it? [y/N]"
+            )
+            timeout: 5 * SECONDS_PER_MINUTE * MS_PER_SECOND
+            output: process.stderr
+        
+        } [ error confirmStr isDefault |
+            if ((not error) and (not isDefault) and (confirmStr == 'y')) (
+                callback
+            ) else [
+                console.error "Cancelled."
+            ]
+        ]
+    ] else callback
 ]
 
 createSalt = [ domain config |
@@ -96,49 +142,6 @@ createSalt = [ domain config |
             ] else [
                 console.error "Cancelled."
             ]
-        ]
-    ]
-]
-
-verifyDomain = [ domain config callback |
-    if config@domain [
-        read {
-            prompt: (
-                "The domain '" + domain + "' already has a salt!\n" +
-                "Are you sure you want to overwrite it? [y/N]"
-            )
-            timeout: 5 * SECONDS_PER_MINUTE * MS_PER_SECOND
-            output: process.stderr
-        
-        } [ error confirmStr isDefault |
-            if ((not error) and (not isDefault) and (confirmStr == 'y')) (
-                callback
-            ) else [
-                console.error "Cancelled."
-            ]
-        ]
-    ] else callback
-]
-
-getPassword = [ domain salt |
-    read PROMPT [ error master isDefault |
-        // Check for "", timeout, or escaping with Ctrl-C
-        isError = (error != null and error != undefined)
-        isEmpty = isDefault or (master == "")
-
-        isValid = not (isError or isEmpty)
-
-        if isValid [
-            result = bcrypt.hashSync (master + SEPARATOR + domain) salt
-            assert (result.length == BCRYPT_HASH_LENGTH)
-
-            // The first 28 characters of the result are roughly the salt.
-            // We grab RESULT_LENGTH characters from the tail of the result string
-            assert (RESULT_LENGTH <= 32)
-            slicedResult = result.slice (-RESULT_LENGTH)
-
-            // And send that on stdout
-            console.log slicedResult
         ]
     ]
 ]
