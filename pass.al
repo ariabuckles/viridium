@@ -2,7 +2,12 @@ assert = require "assert"
 fs = require "fs"
 path = require "path"
 read = require "read"
+
 bcrypt = require "bcrypt-nodejs"
+commander = require "commander"
+u = require "underscore"
+
+package = require "./package.json"
 
 // Configurable Params
 SEPARATOR = ' '
@@ -14,6 +19,7 @@ SECONDS_PER_MINUTE = 60
 MS_PER_SECOND = 1000
 BCRYPT_HASH_LENGTH = 60
 DEFAULT_ROUNDS = 15
+DEFAULT_CONFIG = {}
 
 process = global.process
 
@@ -27,60 +33,99 @@ PROMPT = {
 }
 
 ROUNDS_PROMPT = {
-    prompt: "number of rounds"
+    prompt: "number of rounds (15 recommended):"
     timeout: 5 * SECONDS_PER_MINUTE * MS_PER_SECOND
     output: process.stderr
-    default: String DEFAULT_ROUNDS
 }
-
-// Grab the command line arguments passed after this program is run
-getArgs = [
-    this_program_filename = path.basename __filename
-    this_program_regex = new RegExp (this_program_filename + "$")
-
-    // Look for our filename in the arguments list
-    exe_index = (process.argv.map [ arg |
-        ret this_program_regex.test arg
-    ]).indexOf true
-
-    // And return the arguments listed after our filename
-    ret process.argv.slice (exe_index + 1)
-]
 
 HOME = process.env.HOME or process.env.HOMEPATH or process.env.USERPROFILE
 CONFIG_FILE = HOME + "/.viridium.json"
 
-createNewConfig = [
-    read ROUNDS_PROMPT [ error roundsStr isDefault |
-        rounds = if isDefault [DEFAULT_ROUNDS] else [
-            ret ((String roundsStr) or DEFAULT_ROUNDS)
-        ]
+main = [
+    commander.parseExpectedArgs {'<domain>'}
+    commander.version package.version
+    commander.option '-s, --salt' "generate a salt for the specified domain, or 'default'"
+    commander.parse(process.argv)
 
-        salt = bcrypt.genSaltSync rounds
+    if (commander.args.length == 0 and (not commander.salt)) [
+        commander.help()
+    ]
 
-        fs.writeFileSync CONFIG_FILE (JSON.stringify {
-            default: salt
-        } null 4) {encoding: 'utf8'}
+    configExists = fs.existsSync CONFIG_FILE
+    config = if configExists [
+        configStr = fs.readFileSync CONFIG_FILE {encoding: 'utf8'}
+        ret JSON.parse configStr
+    ] else DEFAULT_CONFIG
 
-        console.error (
-            "Salt saved in " + CONFIG_FILE + ". " +
-            "Be sure to back this up. It is safe to store this file in a " +
-            "publicly accessible location."
-        )
+    domain = commander.args.join SEPARATOR
+    salt = config@domain or config.default
+    if (commander.salt or (not salt)) [
+        saltDomain = if (domain != "") [domain] else ['default']
+        createSalt saltDomain config
+    ] (domain != "") [
+        getPassword domain salt
     ]
 ]
 
-main = [ config |
-    domain = getArgs().join SEPARATOR
-    salt = config@domain or config.default
+createSalt = [ domain config |
+    console.error (
+        "Setting salt for domain '" + domain + "'."
+    )
 
+    verifyDomain domain config [
+        read ROUNDS_PROMPT [ error roundsStr isDefault |
+            rounds = Number roundsStr
+            if ((u.isFinite rounds) and rounds >= 10 and rounds <= 30) [
+
+                salt = bcrypt.genSaltSync rounds
+
+                mutable newConfig = u.extend {:} config
+                mutate newConfig@domain = salt
+                newConfigStr = JSON.stringify newConfig null 4
+
+                fs.writeFileSync CONFIG_FILE newConfigStr {encoding: 'utf8'}
+
+                console.error (
+                    "Salt saved in " + CONFIG_FILE + ".\n" +
+                    "Be sure to back this up.\n" +
+                    "It is safe to store this file in a " +
+                    "publicly accessible location."
+                )
+
+            ] else [
+                console.error "Cancelled."
+            ]
+        ]
+    ]
+]
+
+verifyDomain = [ domain config callback |
+    if config@domain [
+        read {
+            prompt: (
+                "The domain '" + domain + "' already has a salt!\n" +
+                "Are you sure you want to overwrite it? [y/N]"
+            )
+            timeout: 5 * SECONDS_PER_MINUTE * MS_PER_SECOND
+            output: process.stderr
+        
+        } [ error confirmStr isDefault |
+            if ((not error) and (not isDefault) and (confirmStr == 'y')) (
+                callback
+            ) else [
+                console.error "Cancelled."
+            ]
+        ]
+    ] else callback
+]
+
+getPassword = [ domain salt |
     read PROMPT [ error master isDefault |
         // Check for "", timeout, or escaping with Ctrl-C
         isError = (error != null and error != undefined)
         isEmpty = isDefault or (master == "")
-        isDomainEmpty = (domain == "")
 
-        isValid = not (isError or isEmpty or isDomainEmpty)
+        isValid = not (isError or isEmpty)
 
         if isValid [
             result = bcrypt.hashSync (master + SEPARATOR + domain) salt
@@ -97,9 +142,4 @@ main = [ config |
     ]
 ]
 
-if (fs.existsSync CONFIG_FILE) [
-    configStr = fs.readFileSync CONFIG_FILE {encoding: 'utf8'}
-    config = JSON.parse configStr
-    main config.default
-] else createNewConfig
-
+main()
