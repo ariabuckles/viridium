@@ -70,8 +70,9 @@ encoding: "utf8"
 console.error((((("Salt saved in " + CONFIG_FILE) + ". ") + "Be sure to back this up. It is safe to store this file in a ") + "publicly accessible location."));
 }));
 });
-var main = (function(salt) {
+var main = (function(config) {
 var domain = getArgs().join(SEPARATOR);
+var salt = (config[domain] || config.default);
 read(PROMPT, (function(error, master, isDefault) {
 var isError = ((error !== null) && (error !== undefined));
 var isEmpty = (isDefault || (master === ""));

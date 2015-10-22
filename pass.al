@@ -70,8 +70,9 @@ createNewConfig = [
     ]
 ]
 
-main = [ salt |
+main = [ config |
     domain = getArgs().join SEPARATOR
+    salt = config@domain or config.default
 
     read PROMPT [ error master isDefault |
         // Check for "", timeout, or escaping with Ctrl-C
