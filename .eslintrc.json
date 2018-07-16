@@ -1,0 +1,60 @@
+{
+  "root": true,
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "script",
+    "ecmaFeatures": {
+      "impliedStrict": true,
+      "jsx": true
+    }
+  },
+  "env": {
+    "es6": true
+  },
+  "globals": {
+    "game": false
+  },
+  "rules": {
+    "indent": ["warn", 4],
+    "semi": "warn",
+    "no-extra-semi": "warn",
+    "new-parens": "error",
+    "comma-spacing": "warn",
+    "semi-spacing": "warn",
+    "no-bitwise": "error",
+    "no-multi-assign": "warn",
+    "no-trailing-spaces": "warn",
+    "one-var": ["warn", "never"],
+    "semi-style": ["warn", "last"],
+    "no-confusing-arrow": ["error", {"allowParens": true}],
+    "no-const-assign": "error",
+    "no-new-wrappers": "error",
+    "no-new-func": "error",
+    "no-labels": "error",
+    "no-implied-eval": "error",
+    "no-extra-label": "error",
+    "no-eval": "warn",
+    "no-void": "error",
+    "no-with": "error",
+
+    "for-direction": "warn",
+    "no-cond-assign": "warn",
+    "no-return-assign": "warn",
+    "no-dupe-args": "warn",
+    "no-unsafe-negation": "warn",
+
+    "object-shorthand": ["warn", "never"],
+    "no-var": "warn",
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "FunctionDeclaration",
+        "message": "Please use `let f = function()` instead of `function f()`"
+      },
+      {
+        "selector": "SequenceExpression",
+        "message": "Sorry, `,` may only be used for functions and arrays, you might have meant a `;`?"
+      }
+    ]
+  }
+}
