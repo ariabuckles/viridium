@@ -3,10 +3,10 @@
   "version": "0.3.3",
   "description": "stateless password manager",
   "bin": {
-    "viridium": "viridium"
+    "viridium": "pass.js"
   },
   "scripts": {
-    "pretty": "prettier --write index.js"
+    "pretty": "prettier --write pass.js"
   },
   "author": "Aria Buckles",
   "license": "MIT",
