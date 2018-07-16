@@ -5,7 +5,10 @@
   "bin": {
     "viridium": "viridium"
   },
-  "author": "Jack Toole",
+  "scripts": {
+    "pretty": "prettier --write index.js"
+  },
+  "author": "Aria Buckles",
   "license": "MIT",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
@@ -33,5 +36,13 @@
   "bugs": {
     "url": "https://github.com/jacktoole1/viridium/issues"
   },
-  "homepage": "https://github.com/jacktoole1/viridium"
+  "homepage": "https://github.com/ariabuckles/viridium",
+  "prettier": {
+    "semi": true,
+    "tabWidth": 4,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "bracketSpacing": true,
+    "arrowParens": "always"
+  }
 }
