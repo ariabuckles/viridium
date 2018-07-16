@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const read = require('read');
 
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcryptjs');
 const commander = require('commander');
 
 const package_ = require('./package.json');

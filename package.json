@@ -1,6 +1,6 @@
 {
   "name": "viridium",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "stateless password manager",
   "bin": {
     "viridium": "pass.js"
@@ -11,30 +11,23 @@
   "author": "Aria Buckles",
   "license": "MIT",
   "dependencies": {
-    "bcrypt-nodejs": "0.0.3",
-    "commander": "2.2.0",
-    "read": "1.0.5",
-    "underscore": "1.6.0"
+    "bcryptjs": "2.4.3",
+    "commander": "2.16.0",
+    "read": "1.0.7"
   },
   "main": "pass.js",
-  "devDependencies": {
-    "aletheia": "0.0.4",
-    "eslint": "^5.1.0",
-    "prettier": "^1.13.7"
-  },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jacktoole1/viridium.git"
+    "url": "git://github.com/ariabuckles/viridium.git"
   },
   "keywords": [
     "bcrypt",
     "stateless",
     "password",
-    "manager",
-    "aletheia"
+    "manager"
   ],
   "bugs": {
-    "url": "https://github.com/jacktoole1/viridium/issues"
+    "url": "https://github.com/ariabuckles/viridium/issues"
   },
   "homepage": "https://github.com/ariabuckles/viridium",
   "prettier": {
