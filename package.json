@@ -12,8 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "2.4.3",
-    "commander": "2.16.0",
-    "read": "1.0.7"
+    "commander": "2.16.0"
   },
   "main": "pass.js",
   "repository": {
