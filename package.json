@@ -3,10 +3,10 @@
   "version": "0.4.1",
   "description": "stateless password manager",
   "bin": {
-    "viridium": "pass.js"
+    "viridium": "viridium.js"
   },
   "scripts": {
-    "pretty": "prettier --write pass.js"
+    "pretty": "prettier --write viridium.js"
   },
   "author": "Aria Buckles",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "bcryptjs": "2.4.3",
     "commander": "2.16.0"
   },
-  "main": "pass.js",
+  "main": "viridium.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/ariabuckles/viridium.git"
