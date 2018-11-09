@@ -6,7 +6,7 @@
     "viridium": "viridium.js"
   },
   "scripts": {
-    "pretty": "prettier --write viridium.js"
+    "format": "npx prettier --write viridium.js"
   },
   "author": "Aria Buckles",
   "license": "MIT",
@@ -33,7 +33,7 @@
     "semi": true,
     "tabWidth": 4,
     "singleQuote": true,
-    "trailingComma": "none",
+    "trailingComma": "es5",
     "bracketSpacing": true,
     "arrowParens": "always"
   }

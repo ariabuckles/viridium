@@ -30,7 +30,7 @@ const PROMPT = {
     timeout: 5 * SECONDS_PER_MINUTE * MS_PER_SECOND,
     output: process.stderr, // We prompt on stderr, so that stdout is exactly
     // the result password
-    default: ''
+    default: '',
 };
 
 const ROUNDS_PROMPT = {
@@ -56,7 +56,7 @@ const read = (options, callback) => {
     });
     rl.on('SIGINT', () => {
         rl.close();
-        process.exit(1)
+        process.exit(1);
     });
     rl.on('line', (line) => {
         rl.close();
@@ -122,8 +122,8 @@ const checkPassword = (domain, salt) => {
     getPassword((master) => {
         const result = hash(master, domain, salt);
 
-         // the hash result is stored in the salt
-        const isCorrect = (result === salt);
+        // the hash result is stored in the salt
+        const isCorrect = result === salt;
         console.log(isCorrect ? 'correct' : 'incorrect');
     });
 };
@@ -167,7 +167,8 @@ const main = () => {
     commander.parse(process.argv);
 
     const configExists = fs.existsSync(CONFIG_FILE);
-    const shouldSetupSalt = commander.salt || !configExists || commander.createCheck;
+    const shouldSetupSalt =
+        commander.salt || !configExists || commander.createCheck;
     const isCheck = commander.check || commander.createCheck;
     if (commander.args.length === 0 && !shouldSetupSalt && !isCheck) {
         commander.help(); // exits
@@ -187,13 +188,10 @@ const main = () => {
             return;
         }
         createCheck(config);
-
     } else if (domain === CHECK_DOMAIN) {
         checkPassword(domain, salt);
-
     } else if (shouldSetupSalt || !salt) {
         createSalt(saltDomain, config);
-
     } else if (domain !== '') {
         processPassword(domain, salt, config[CHECK_DOMAIN] != null);
     }
@@ -209,7 +207,7 @@ const confirmNewSalt = (domain, config, callback) => {
                     "' already has a salt!\n" +
                     'Are you sure you want to overwrite it? [y/N]',
                 timeout: 5 * SECONDS_PER_MINUTE * MS_PER_SECOND,
-                output: process.stderr
+                output: process.stderr,
             },
             (error, confirmStr, isDefault) => {
                 if (!error && !isDefault && confirmStr === 'y') {
@@ -247,7 +245,7 @@ const createSalt = (domain, config) => {
         const newConfigStr = JSON.stringify(newConfig, null, 4);
 
         fs.writeFileSync(CONFIG_FILE, newConfigStr, {
-            encoding: 'utf8'
+            encoding: 'utf8',
         });
 
         console.error(
@@ -266,20 +264,17 @@ const createCheck = (config) => {
 
     getSalt(CHECK_DOMAIN, config, (salt) => {
         getPassword((master) => {
-
             const result = hash(master, CHECK_DOMAIN, salt);
             let newConfig = Object.assign({}, config);
             newConfig[CHECK_DOMAIN] = result; // bcrypt results are also salts
             const newConfigStr = JSON.stringify(newConfig, null, 4);
 
             fs.writeFileSync(CONFIG_FILE, newConfigStr, {
-                encoding: 'utf8'
+                encoding: 'utf8',
             });
 
             console.error(
-                'Hashed verification saved in ' +
-                    CONFIG_FILE +
-                    '.\n'
+                'Hashed verification saved in ' + CONFIG_FILE + '.\n'
             );
         });
     });
