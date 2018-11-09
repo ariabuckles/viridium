@@ -93,7 +93,7 @@ const getPassword = (callback) => {
 
 const processPassword = (domain, salt, check) => {
     getPassword((master) => {
-        let slicedResult = null;
+        let slicedResult = 'ERR: did not finish processing password';
         if (check) {
             checkPasswordAsync(master, (isCorrect) => {
                 if (isCorrect) {
