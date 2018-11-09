@@ -129,7 +129,7 @@ const checkPassword = (domain, salt) => {
 };
 
 const checkPasswordAsync = (password, callback) => {
-    subprocess = child_process.fork('./viridium.js', ['--check'], {
+    subprocess = child_process.fork(__filename, ['--check'], {
         silent: true,
     });
     const rl = readline.createInterface({
