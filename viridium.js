@@ -99,7 +99,7 @@ const processPassword = (domain, salt, check) => {
                 if (isCorrect) {
                     console.log(slicedResult);
                 } else {
-                    console.log('incorrect password');
+                    console.error('incorrect password');
                 }
             });
         }
